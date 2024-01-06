@@ -1,10 +1,14 @@
 
 use std::process::{Command,Stdio,Output};
 //use std::io::{self,Write};
-use std::collections::HashMap;
+use std::collections::{
+    HashMap,
+};
 
 
-use std::env;
+use std::env::{
+   args_os,
+};
 
 
 pub fn git_pull(_args:Vec<String>)->Result<Option<Output>,CliError>
@@ -114,17 +118,21 @@ fn get_commands()->HashMap<String,CliCommand>{
 fn main() {
     let commands = get_commands();
     let mut _args:Vec<String> = vec![];
-    for arg in env::args(){
-        _args.push(arg);
-    }
-    if _args.len() < 1 {
+
+    if args_os().len() < 2 {
         commands["help"](vec![]); 
         return;
     }
+    for arg in args_os(){
+
+        _args.push(arg.into_string().unwrap());
+    }
+    
     if commands.contains_key(&_args[1])
     {
         //let result = commands[&_args[0]](&_args.as_slice(1,&_args.len()));
         //let result = commands[&_args[0]]((&_args.as_slice(1 as i32,&_args.len() as i32)).to_vec());
+        //let result = commands[&_args[1]](_args);
         let result = commands[&_args[1]](_args);
         if result.is_ok(){
             println!("Done");
